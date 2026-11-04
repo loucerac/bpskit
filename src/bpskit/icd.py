@@ -4,11 +4,22 @@ Codes are handled in normalised form: upper case, no dot ('E119').
 """
 
 import re
+from collections.abc import Iterable
 
 import numpy as np
 import pandas as pd
 
 from bpskit.delivery import normalise_code
+
+__all__ = [
+    "expand_spec",
+    "prefix_mask",
+    "match_table",
+    "icd10_chapter",
+    "CHAPTER_ROMAN",
+    "Icd9Mapper",
+    "harmonise",
+]
 
 _CAT = re.compile(r"^[A-Z]\d{2}$")
 
@@ -108,7 +119,7 @@ CHAPTER_ROMAN = {
 }
 
 
-def icd10_chapter(codes) -> np.ndarray:
+def icd10_chapter(codes: Iterable[str]) -> np.ndarray:
     """Chapter number (1-22) of 3-character ICD-10 categories; 0 for anything else."""
     codes = pd.Series(codes, dtype=str)
     ok = codes.str.fullmatch(r"[A-Z]\d{2}").to_numpy()
@@ -155,7 +166,7 @@ class Icd9Mapper:
         return codes.map(self._cache)
 
 
-def harmonise(df: pd.DataFrame, changeover_day, mapper: Icd9Mapper) -> pd.Series:
+def harmonise(df: pd.DataFrame, changeover_day: float | None, mapper: Icd9Mapper) -> pd.Series:
     """Map ICD-9 codes in `df.code` to ICD-10 in place; return each row's system.
 
     A code is ICD-9 when it is all digits. Before `changeover_day` (None: never)

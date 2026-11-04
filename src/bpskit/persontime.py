@@ -5,8 +5,24 @@ person-time is a subtraction and NaN means "no date" (alive, never recorded).
 Ages are in years of DAYS_PER_YEAR days.
 """
 
+from collections.abc import Iterator
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
+
+__all__ = [
+    "DAYS_PER_YEAR",
+    "to_days",
+    "day_of",
+    "follow_up",
+    "age_bands",
+    "lexis",
+    "band_index",
+    "accumulate",
+    "person_chunks",
+    "read_universe",
+]
 
 DAYS_PER_YEAR = 365.25
 EPOCH = np.datetime64("1970-01-01", "D")
@@ -20,12 +36,14 @@ def to_days(s: pd.Series) -> np.ndarray:
     return out
 
 
-def day_of(date) -> float:
+def day_of(date: str | pd.Timestamp) -> float:
     """One date (string or Timestamp) as days since 1970-01-01."""
     return to_days(pd.Series([pd.Timestamp(date)]))[0]
 
 
-def follow_up(birth_d, death_d, start_d, end_d):
+def follow_up(
+    birth_d: np.ndarray, death_d: np.ndarray, start_d: float, end_d: float
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Entry day, exit day and whether any follow-up falls inside [start, end].
 
     A person enters at the later of the period start and birth, and leaves at
@@ -72,7 +90,9 @@ def accumulate(acc: np.ndarray, key: np.ndarray, values: np.ndarray) -> None:
         acc[:, b] += np.bincount(key, weights=values[:, b], minlength=acc.shape[0])
 
 
-def person_chunks(path, batch_rows: int, columns=None):
+def person_chunks(
+    path: str | Path, batch_rows: int, columns: list[str] | None = None
+) -> Iterator[pd.DataFrame]:
     """Stream a parquet sorted by `idx` as DataFrames that never split a person.
 
     Each yielded frame holds whole persons; the last person of a batch is held
@@ -94,7 +114,7 @@ def person_chunks(path, batch_rows: int, columns=None):
         yield left.reset_index(drop=True)
 
 
-def read_universe(path, columns: list[str]) -> pd.DataFrame:
+def read_universe(path: str | Path, columns: list[str]) -> pd.DataFrame:
     """Read universe columns, refusing a file written by an older workflow version.
 
     Snakemake does not rebuild an intermediate whose rule did not change, so a

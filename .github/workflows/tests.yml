@@ -3,7 +3,6 @@ name: Tests
 on:
   push:
     branches: [main]
-    tags: ["v*"]
   pull_request:
 
 jobs:
@@ -18,3 +17,5 @@ jobs:
           cache: true
       - run: pixi run lint
       - run: pixi run test
+      - run: pixi run example
+      - run: pixi run build

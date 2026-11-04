@@ -5,9 +5,10 @@
     bpskit.persontime  dates as numbers, age bands, Lexis splitting, person streaming
     bpskit.stats       exact Poisson and binomial tests, BH / Bonferroni
     bpskit.transfer    the check that no file leaving the data machine names a patient
+    bpskit.synthetic   a synthetic BPS delivery with planted structure, for tests
 
 The command line (`bpskit pullable`, `bpskit check-logs`) runs the transfer
 check on the data machine.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"

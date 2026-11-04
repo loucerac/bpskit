@@ -12,6 +12,8 @@ pyarrow = ">=25.0.0,<26"
 pyyaml = ">=6.0.3,<7"
 pytest = ">=8,<10"
 ruff = ">=0.16.7,<0.17"
+python-build = ">=1.2"
+twine = ">=6"
 
 [pypi-dependencies]
 bpskit = { path = ".", editable = true }
@@ -20,3 +22,5 @@ bpskit = { path = ".", editable = true }
 test = "pytest -q"
 lint = "ruff check . && ruff format --check ."
 fmt = "ruff format . && ruff check --fix ."
+example = { cmd = "python examples/quickstart.py", description = "the README's worked example" }
+build = { cmd = "rm -rf dist && python -m build && twine check --strict dist/*", description = "build the sdist and wheel and check their metadata" }

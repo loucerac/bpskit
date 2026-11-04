@@ -2,10 +2,11 @@
 
     bpskit pullable [--strict] <path> ...   exit 0 only if no file names a patient
     bpskit check-logs [workflow_dir]        list the logs that may leave
+    bpskit synthetic <out_dir>              write a synthetic delivery (bpskit.synthetic)
 
-Both run from the workflow directory and read its config (default
-config/config.yaml) for the delivery's id columns and the id files under
-results/work/ids/.
+pullable and check-logs run from the workflow directory and read its config
+(default config/config.yaml) for the delivery's id columns and the id files
+under results/work/ids/.
 """
 
 import argparse
@@ -16,7 +17,7 @@ from bpskit import transfer
 from bpskit.delivery import load_config
 
 
-def pullable(args) -> int:
+def pullable(args: argparse.Namespace) -> int:
     root = Path.cwd()
     cfg = load_config(root / args.config)
     ids = transfer.ids_for_root(root, cfg)
@@ -31,7 +32,7 @@ def pullable(args) -> int:
     return 0
 
 
-def check_logs(args) -> int:
+def check_logs(args: argparse.Namespace) -> int:
     """Write the clean logs to results/work/logs_pullable.txt (which sync.sh copies).
 
     A traceback can print a data row, so a log containing an id is WITHHELD,
@@ -61,7 +62,15 @@ def check_logs(args) -> int:
     return 0
 
 
-def main(argv=None) -> int:
+def synthetic(args: argparse.Namespace) -> int:
+    from bpskit.synthetic import make_delivery
+
+    make_delivery(args.out_dir, args.persons, args.seed)
+    print(f"{args.persons:,} synthetic persons -> {args.out_dir}")
+    return 0
+
+
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="bpskit", description=__doc__.split("\n")[0])
     parser.add_argument(
         "--config",
@@ -80,6 +89,11 @@ def main(argv=None) -> int:
     c = sub.add_parser("check-logs", help="list the logs free of patient ids")
     c.add_argument("workflow_dir", nargs="?", default=".")
     c.set_defaults(func=check_logs)
+    s = sub.add_parser("synthetic", help="write a synthetic BPS delivery")
+    s.add_argument("out_dir")
+    s.add_argument("--persons", type=int, default=50_000)
+    s.add_argument("--seed", type=int, default=1)
+    s.set_defaults(func=synthetic)
     args = parser.parse_args(argv)
     return args.func(args)
 

@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use bpskit, please cite it as below."
+title: "bpskit: tools for studies on a BPS health-records delivery"
+type: software
+authors:
+  - family-names: Loucera
+    given-names: Carlos
+    email: clou@us.es
+license: MIT
+repository-code: "https://github.com/loucerac/bpskit"
+version: 0.2.0
+keywords:
+  - epidemiology
+  - electronic health records
+  - ICD-10
+  - disclosure control

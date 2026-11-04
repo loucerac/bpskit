@@ -19,11 +19,23 @@ checked here; a publication floor is a separate, later decision.
 """
 
 import re
+from collections.abc import Iterable
 from pathlib import Path
 
 import pandas as pd
 
 from bpskit.delivery import delivery_root, stream_csv
+
+__all__ = [
+    "IDS_DIR",
+    "MIN_ID_LEN",
+    "write_ids",
+    "load_ids",
+    "ids_for_root",
+    "forbidden_columns",
+    "check_file",
+    "check",
+]
 
 IDS_DIR = "results/work/ids"
 # Shorter ids would match ordinary counts in every table. How many are skipped
@@ -65,12 +77,12 @@ def _finish(ids: set[str], where: str) -> set[str]:
     return ids
 
 
-def write_ids(ids, path) -> None:
+def write_ids(ids: Iterable[str], path: str | Path) -> None:
     """Write an id list for the transfer check (one `pid` column)."""
     pd.DataFrame({"pid": pd.Series(list(ids), dtype="string")}).to_parquet(path, index=False)
 
 
-def load_ids(paths) -> set[str]:
+def load_ids(paths: Iterable[str | Path]) -> set[str]:
     """The identifier set from id files, as declared inputs of a rule."""
     paths = list(paths)
     ids: set[str] = set()

@@ -6,7 +6,10 @@ family rather than counting as tests.
 
 import numpy as np
 import pandas as pd
+from numpy.typing import ArrayLike
 from scipy import stats
+
+__all__ = ["bh", "adjust", "poisson_rr", "binom_half_p", "binom_p"]
 
 
 def bh(p: pd.Series) -> pd.Series:
@@ -36,7 +39,9 @@ def adjust(p: pd.Series, method: str) -> pd.Series:
     raise ValueError(f"multiplicity must be 'bh' or 'bonferroni', not {method!r}")
 
 
-def poisson_rr(obs, exp, alpha: float):
+def poisson_rr(
+    obs: ArrayLike, exp: ArrayLike, alpha: float
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Observed/expected ratio, exact (Garwood) interval and two-sided exact p.
 
     `exp` is treated as known. exp == 0 gives an infinite or NaN ratio.
@@ -52,7 +57,7 @@ def poisson_rr(obs, exp, alpha: float):
     return rr, lo, hi, p
 
 
-def binom_half_p(k, n) -> np.ndarray:
+def binom_half_p(k: ArrayLike, n: ArrayLike) -> np.ndarray:
     """Two-sided exact binomial test of k successes in n against p = 0.5; NaN when n = 0."""
     k, n = np.asarray(k, float), np.asarray(n, float)
     with np.errstate(invalid="ignore"):
@@ -60,7 +65,7 @@ def binom_half_p(k, n) -> np.ndarray:
     return np.where(n > 0, p, np.nan)
 
 
-def binom_p(k, n, p0) -> np.ndarray:
+def binom_p(k: ArrayLike, n: ArrayLike, p0: ArrayLike) -> np.ndarray:
     """Two-sided exact binomial test of k in n against p0 (doubled smaller tail).
 
     NaN when n = 0 or p0 is 0 or 1, where the test is undefined.

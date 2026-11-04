@@ -1,0 +1,41 @@
+# Pushing a tag vX.Y.Z builds the package and publishes it to PyPI with trusted
+# publishing (OIDC): no token is stored anywhere. One-time setup on pypi.org:
+# add this repository as a trusted publisher of `bpskit`, workflow release.yml,
+# environment `pypi`.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: prefix-dev/setup-pixi@v0.8.1
+        with:
+          pixi-version: v0.81.0
+          locked: true
+          cache: true
+      - run: pixi run test
+      - name: The tag matches the package version
+        run: test "${GITHUB_REF_NAME#v}" = "$(pixi run -q python -c 'import bpskit; print(bpskit.__version__)')"
+      - run: pixi run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1

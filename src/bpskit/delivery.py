@@ -5,15 +5,26 @@ uses sentinel codes ("-1", "-2", "-9", "") for "unknown". Callers decide what
 a sentinel means for each column: a missing date, or an unknown count.
 """
 
+from collections.abc import Iterator
 from pathlib import Path
 
 import pandas as pd
 import yaml
 
+__all__ = [
+    "read_delivery",
+    "read_header",
+    "stream_csv",
+    "parse_date",
+    "normalise_code",
+    "load_config",
+    "delivery_root",
+]
+
 PROFILE = "profiles/default/config.yaml"
 
 
-def read_delivery(path, usecols: list[str]) -> pd.DataFrame:
+def read_delivery(path: str | Path, usecols: list[str]) -> pd.DataFrame:
     """Read a small delivery file whole, quotes and padding stripped.
 
     For the people file and similar. Diagnosis files can be hundreds of
@@ -61,13 +72,15 @@ def parse_date(s: pd.Series, fmt: str, sentinels, mid_month_day: int) -> pd.Seri
     return out
 
 
-def read_header(path, encoding: str) -> list[str]:
+def read_header(path: str | Path, encoding: str) -> list[str]:
     """Column names of a delivery file, without reading any data."""
     with open(path, encoding=encoding) as fh:
         return [h.strip().strip('"') for h in fh.readline().rstrip("\r\n").split("|")]
 
 
-def stream_csv(path, usecols: list[str], block_mb: float, encoding: str):
+def stream_csv(
+    path: str | Path, usecols: list[str], block_mb: float, encoding: str
+) -> Iterator[pd.DataFrame]:
     """Yield a delivery file as pandas blocks of text columns.
 
     pyarrow parses `block_mb` of the file at a time, so memory stays flat
@@ -113,7 +126,7 @@ def normalise_code(s: pd.Series) -> pd.Series:
 # --------------------------------------------------------------------------- #
 # Config, for the command-line tools (rules get theirs from Snakemake)
 # --------------------------------------------------------------------------- #
-def load_config(path) -> dict:
+def load_config(path: str | Path) -> dict:
     """A workflow's config file (YAML)."""
     return yaml.safe_load(Path(path).read_text())
 
