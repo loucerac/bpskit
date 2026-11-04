@@ -24,14 +24,14 @@ health-record extracts in a secure data environment generally.
 ## Installing
 
 ```bash
-pip install "bpskit @ git+https://github.com/loucerac/bpskit.git@v0.2.0"
+pip install bpskit
 ```
 
 In a pixi project (`pixi.toml`):
 
 ```toml
 [pypi-dependencies]
-bpskit = { git = "https://github.com/loucerac/bpskit.git", tag = "v0.2.0" }
+bpskit = "==0.2.0"
 ```
 
 In a Snakemake rule environment (`workflow/envs/*.yaml`):
@@ -40,7 +40,7 @@ In a Snakemake rule environment (`workflow/envs/*.yaml`):
 dependencies:
   - pip
   - pip:
-      - git+https://github.com/loucerac/bpskit.git@v0.2.0
+      - bpskit==0.2.0
 ```
 
 Pin a release. Bumping the tag changes the environment file, and Snakemake's
