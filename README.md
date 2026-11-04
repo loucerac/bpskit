@@ -14,7 +14,9 @@ health-record extracts in a secure data environment generally.
 - **Person-time.** Dates as days since 1970, age bands, Lexis splitting,
   person-sorted streaming.
 - **Exact tests.** Poisson rate ratios (Garwood intervals), binomial tests,
-  BH and Bonferroni.
+  two-group rate contrasts with exact intervals, BH and Bonferroni.
+- **Indirect standardisation.** Person-time and expected counts by sex, age,
+  calendar year and prior-year contact intensity; within-person record pairs.
 - **An output check for leaving the secure environment.** `bpskit.transfer`
   refuses any file that contains an identifier the workflow read, or a
   per-person column, and fails closed when it cannot read something.
@@ -31,7 +33,7 @@ In a pixi project (`pixi.toml`):
 
 ```toml
 [pypi-dependencies]
-bpskit = "==0.2.0"
+bpskit = "==0.3.0"
 ```
 
 In a Snakemake rule environment (`workflow/envs/*.yaml`):
@@ -40,7 +42,7 @@ In a Snakemake rule environment (`workflow/envs/*.yaml`):
 dependencies:
   - pip
   - pip:
-      - bpskit==0.2.0
+      - bpskit==0.3.0
 ```
 
 Pin a release. Bumping the tag changes the environment file, and Snakemake's

@@ -3,7 +3,9 @@
     bpskit.delivery    read the pipe-delimited delivery: sentinels, dates, streaming
     bpskit.icd         ICD-10 code specs and chapters, ICD-9 -> ICD-10 mapping (CMS GEM)
     bpskit.persontime  dates as numbers, age bands, Lexis splitting, person streaming
-    bpskit.stats       exact Poisson and binomial tests, BH / Bonferroni
+    bpskit.stats       exact Poisson and binomial tests, exact two-group rate contrasts,
+                       BH / Bonferroni
+    bpskit.strata      strata for indirect standardisation, within-person record pairs
     bpskit.transfer    the check that no file leaving the data machine names a patient
     bpskit.synthetic   a synthetic BPS delivery with planted structure, for tests
 
@@ -11,4 +13,4 @@ The command line (`bpskit pullable`, `bpskit check-logs`) runs the transfer
 check on the data machine.
 """
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"

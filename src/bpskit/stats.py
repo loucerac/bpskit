@@ -9,7 +9,15 @@ import pandas as pd
 from numpy.typing import ArrayLike
 from scipy import stats
 
-__all__ = ["bh", "adjust", "poisson_rr", "binom_half_p", "binom_p"]
+__all__ = [
+    "bh",
+    "adjust",
+    "poisson_rr",
+    "binom_half_p",
+    "binom_p",
+    "idtn_from_ratio",
+    "exact_contrast",
+]
 
 
 def bh(p: pd.Series) -> pd.Series:
@@ -74,3 +82,59 @@ def binom_p(k: ArrayLike, n: ArrayLike, p0: ArrayLike) -> np.ndarray:
     with np.errstate(invalid="ignore"):
         p = np.minimum(1.0, 2 * np.minimum(stats.binom.cdf(k, n, p0), stats.binom.sf(k - 1, n, p0)))
     return np.where((n > 0) & (p0 > 0) & (p0 < 1), p, np.nan)
+
+
+def idtn_from_ratio(r: ArrayLike) -> np.ndarray:
+    """IDTN from a rate ratio: (r - 1) / (r + 1), with an infinite ratio giving 1."""
+    r = np.asarray(r, float)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        out = (r - 1.0) / (r + 1.0)
+    return np.where(np.isinf(r), 1.0, out)
+
+
+def exact_contrast(
+    cf: ArrayLike, pyf: ArrayLike, cm: ArrayLike, pym: ArrayLike, alpha: float
+) -> pd.DataFrame:
+    """Rate ratio, IDTN and rate difference of two groups, with exact intervals.
+
+    Written for female (f) against male (m), the names the output columns carry,
+    but any two groups work.
+
+    Conditional on the total count, female cases are binomial with
+    p = IRR*pyf / (IRR*pyf + pym). A Clopper-Pearson interval on p therefore
+    maps to an exact interval on the IRR, and through the monotone
+    (r-1)/(r+1) onto IDTN. Exact matters here: age bands at the extremes hold
+    a handful of cases, where a Wald interval on log IRR is badly wrong.
+
+    Rates are per 100,000 person-years. Cells with no cases or no person-time
+    in either sex come back NaN rather than as 0 or +-inf.
+    """
+    cf, cm = np.asarray(cf, float), np.asarray(cm, float)
+    pyf, pym = np.asarray(pyf, float), np.asarray(pym, float)
+    n = cf + cm
+    with np.errstate(invalid="ignore", divide="ignore"):
+        rf, rm = cf / pyf, cm / pym
+        irr = rf / rm
+        idtn = (rf - rm) / (rf + rm)
+        p_lo = np.where(cf > 0, stats.beta.ppf(alpha / 2, cf, n - cf + 1), 0.0)
+        p_hi = np.where(cf < n, stats.beta.ppf(1 - alpha / 2, cf + 1, n - cf), 1.0)
+        k = pym / pyf
+        irr_lo = p_lo / (1 - p_lo) * k
+        irr_hi = np.where(p_hi >= 1, np.inf, p_hi / (1 - p_hi) * k)
+    bad = (n == 0) | (pyf <= 0) | (pym <= 0)
+    out = pd.DataFrame(
+        {
+            "rate_f": rf * 1e5,
+            "rate_m": rm * 1e5,
+            "rd_per_100k": (rf - rm) * 1e5,
+            "irr": irr,
+            "irr_lo": irr_lo,
+            "irr_hi": irr_hi,
+            "idtn": idtn,
+            "idtn_lo": idtn_from_ratio(irr_lo),
+            "idtn_hi": idtn_from_ratio(irr_hi),
+        }
+    )
+    out.loc[bad, ["irr", "irr_lo", "irr_hi", "idtn", "idtn_lo", "idtn_hi"]] = np.nan
+    out.loc[(pyf <= 0) | (pym <= 0), ["rate_f", "rate_m", "rd_per_100k"]] = np.nan
+    return out

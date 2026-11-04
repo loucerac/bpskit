@@ -5,6 +5,18 @@ All notable changes to bpskit. The format follows
 [Semantic Versioning](https://semver.org/): until 1.0, a minor release may
 change the public API (the names in each module's `__all__`).
 
+## [0.3.0]
+
+### Added
+- `bpskit.strata`: `Strata` (person-time and expected counts by sex, age band,
+  calendar year and prior-year contact intensity) and `person_pairs`.
+- `bpskit.stats.exact_contrast` and `idtn_from_ratio`: rate ratio, IDTN and rate
+  difference of two groups with exact (Clopper-Pearson) intervals.
+- `bpskit.icd.read_conditions`: read and validate a condition table.
+
+These moved from the BPS sex-differences workflow, so a workflow needs no
+helper modules of its own.
+
 ## [0.2.0]
 
 ### Added
@@ -25,5 +37,6 @@ change the public API (the names in each module's `__all__`).
   BPS sex-differences workflow, and the `bpskit pullable` / `bpskit check-logs`
   command line.
 
+[0.3.0]: https://github.com/loucerac/bpskit/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/loucerac/bpskit/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/loucerac/bpskit/releases/tag/v0.1.0

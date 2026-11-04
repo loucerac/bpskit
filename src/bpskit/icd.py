@@ -5,6 +5,7 @@ Codes are handled in normalised form: upper case, no dot ('E119').
 
 import re
 from collections.abc import Iterable
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -189,3 +190,27 @@ def harmonise(df: pd.DataFrame, changeover_day: float | None, mapper: Icd9Mapper
         system[is9] = np.where(hit, "icd9_mapped", "icd9_unmapped")
         df.loc[hit[hit].index, "code"] = normalise_code(m[hit])
     return system
+
+
+def read_conditions(path: str | Path) -> pd.DataFrame:
+    """A condition table (TSV): one row per condition, its ICD-10 code spec.
+
+    Columns: condition_id ([a-z0-9_]+, so it can name a file or a Snakemake
+    wildcard), chapter_num, codes (a spec for `expand_spec`), and optionally
+    exclude; any other column is carried along. Lines starting with # are
+    comments.
+
+    Raises:
+        ValueError: a condition_id that cannot be a Snakemake wildcard value, a
+            duplicated id, or a code spec that does not parse.
+    """
+    c = pd.read_csv(path, sep="\t", comment="#", dtype=str, keep_default_na=False)
+    c["chapter_num"] = c["chapter_num"].astype(int)
+    bad = c.loc[~c.condition_id.str.fullmatch(r"[a-z0-9_]+"), "condition_id"]
+    if len(bad):
+        raise ValueError(f"condition_id not wildcard-safe: {list(bad)}")
+    if c.condition_id.duplicated().any():
+        raise ValueError("duplicated condition_id")
+    for spec in c["codes"]:
+        expand_spec(spec)
+    return c
