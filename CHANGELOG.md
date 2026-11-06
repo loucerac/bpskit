@@ -1,9 +1,10 @@
 # Changelog
 
-All notable changes to bpskit. The format follows
-[Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the versions
+All notable changes to bpskit. Versions follow
 [Semantic Versioning](https://semver.org/): until 1.0, a minor release may
-change the public API (the names in each module's `__all__`).
+change the public API (the names in each module's `__all__`). From 0.4.0 on,
+release-please writes each entry from the conventional commits it releases;
+edit the entry in the release PR before merging when it needs more context.
 
 ## [0.4.0]
 

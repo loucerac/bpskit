@@ -147,10 +147,12 @@ pixi run example    # the worked example
 pixi run build      # sdist + wheel, twine check
 ```
 
-Releasing: bump `__version__` in `src/bpskit/__init__.py`, add the release to
-`CHANGELOG.md`, commit, then tag `vX.Y.Z` and push the tag.
-`.github/workflows/release.yml` checks that the tag matches the version,
-builds, and publishes to PyPI by trusted publishing.
+Releasing: commit messages are [conventional commits](https://www.conventionalcommits.org)
+(`fix:` bumps the patch, `feat:` the minor version). On every push to `main`,
+release-please keeps a release PR open with the next version, its
+`CHANGELOG.md` entry and the bumped `__version__` and `CITATION.cff`. Merging
+it tags `vX.Y.Z`, and `.github/workflows/release.yml` then tests, builds and
+publishes that tag to PyPI by trusted publishing.
 
 ## Citing
 

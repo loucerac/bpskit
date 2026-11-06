@@ -16,4 +16,4 @@ The command line (`bpskit pullable`, `bpskit check-logs`) runs the transfer
 check on the data machine.
 """
 
-__version__ = "0.4.0"
+__version__ = "0.4.0"  # x-release-please-version
