@@ -4,6 +4,8 @@ Tools for studies on a BPS (Base Poblacional de Salud, Servicio Andaluz de
 Salud) health-records delivery, and for working with pseudonymised
 health-record extracts in a secure data environment generally.
 
+- **Ingest it.** The people file into a universe table, and each diagnosis
+  file into dated, ICD-10-harmonised events, with data-quality tables.
 - **Read the delivery.** Pipe-delimited files read as text, sentinel codes for
   "unknown", month- and day-precision dates, streaming in fixed-size blocks so a
   400-million-row file never sits in memory.
@@ -33,7 +35,7 @@ In a pixi project (`pixi.toml`):
 
 ```toml
 [pypi-dependencies]
-bpskit = "==0.3.0"
+bpskit = "==0.4.0"
 ```
 
 In a Snakemake rule environment (`workflow/envs/*.yaml`):
@@ -42,7 +44,7 @@ In a Snakemake rule environment (`workflow/envs/*.yaml`):
 dependencies:
   - pip
   - pip:
-      - bpskit==0.3.0
+      - bpskit==0.4.0
 ```
 
 Pin a release. Bumping the tag changes the environment file, and Snakemake's

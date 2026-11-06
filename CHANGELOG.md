@@ -5,6 +5,18 @@ All notable changes to bpskit. The format follows
 [Semantic Versioning](https://semver.org/): until 1.0, a minor release may
 change the public API (the names in each module's `__all__`).
 
+## [0.4.0]
+
+### Added
+- `bpskit.universe.build_universe`: the people file into the universe table,
+  with every delivered id (for the transfer check) and optional bootstrap buckets.
+- `bpskit.ingest.ingest_source`: a diagnosis file into dated, ICD-10-harmonised
+  events, episode flags, a harmonisation table and the ids not in the universe.
+- `bpskit.quality`: the harmonisation table and implausible-record counts.
+
+These are the ingest steps every BPS workflow starts with; the shared
+Snakemake module bps-workflow runs them.
+
 ## [0.3.0]
 
 ### Added
@@ -37,6 +49,7 @@ helper modules of its own.
   BPS sex-differences workflow, and the `bpskit pullable` / `bpskit check-logs`
   command line.
 
+[0.4.0]: https://github.com/loucerac/bpskit/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/loucerac/bpskit/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/loucerac/bpskit/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/loucerac/bpskit/releases/tag/v0.1.0
