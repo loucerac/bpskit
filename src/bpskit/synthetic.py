@@ -12,6 +12,9 @@ analysis can be checked against it:
                                  person-level healthcare-use intensity (lognormal)
     R53                          routine visits, Poisson in that intensity
     U07                          from 2020 only, independent of everything
+    E11.2 / E11.9                in primary care, E11 is coded E11.2 (with kidney
+                                 complications) for persons who get N18, else E11.9,
+                                 so E11 has two sub-categories to tell apart
 
 Directional tests need power: at 50,000 persons the planted pairs are found;
 at a few thousand the files are only good for exercising code.
@@ -162,7 +165,10 @@ def make_delivery(out_dir: str | Path, n_persons: int = 50_000, seed: int = 1) -
         {
             "COD_ID": pid[a.i],
             "FECHA_INICIO_DIAGNOSTICO": fmt(a.t, "%Y%m%d"),
-            "COD_CIE": a.code + ".9",
+            # E11 with kidney disease to follow is coded E11.2, as a complication
+            # inside the category (CIE-10-ES); everything else is X.9.
+            "COD_CIE": a.code
+            + np.where((a.code == "E11") & ~np.isnan(codes["N18"][a.i]), ".2", ".9"),
         }
     ).to_csv(out / FILES["ap"], sep="|", index=False)
     pd.DataFrame(

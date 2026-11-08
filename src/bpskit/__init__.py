@@ -9,6 +9,8 @@
     bpskit.stats       exact Poisson and binomial tests, exact two-group rate contrasts,
                        BH / Bonferroni
     bpskit.strata      strata for indirect standardisation, within-person record pairs
+    bpskit.cluster     Jaccard similarity, Markov clustering (MCL), modularity, adjusted Rand
+    bpskit.mixture     latent class analysis (Bernoulli mixture, EM) with unobserved cells
     bpskit.transfer    the check that no file leaving the data machine names a patient
     bpskit.synthetic   a synthetic BPS delivery with planted structure, for tests
 
