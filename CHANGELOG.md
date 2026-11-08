@@ -6,6 +6,13 @@ change the public API (the names in each module's `__all__`). From 0.4.0 on,
 release-please writes each entry from the conventional commits it releases;
 edit the entry in the release PR before merging when it needs more context.
 
+## [0.6.0](https://github.com/loucerac/bpskit/compare/v0.5.0...v0.6.0) (2026-11-08)
+
+
+### Features
+
+* add a latent class model for categorical items with censored cells ([acd9c0f](https://github.com/loucerac/bpskit/commit/acd9c0fd5bd036d5049014657b47bb2d9aa882dc))
+
 ## [0.5.0](https://github.com/loucerac/bpskit/compare/v0.4.0...v0.5.0) (2026-11-08)
 
 
