@@ -6,6 +6,13 @@ change the public API (the names in each module's `__all__`). From 0.4.0 on,
 release-please writes each entry from the conventional commits it releases;
 edit the entry in the release PR before merging when it needs more context.
 
+## [0.5.0](https://github.com/loucerac/bpskit/compare/v0.4.0...v0.5.0) (2026-11-08)
+
+
+### Features
+
+* add Markov clustering, modularity and latent class analysis, and plant E11.2 in the synthetic delivery ([2ae456b](https://github.com/loucerac/bpskit/commit/2ae456bafd099071dd50d65d7cf3aec20c79943b))
+
 ## [0.4.0]
 
 ### Added
